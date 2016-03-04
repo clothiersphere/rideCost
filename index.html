@@ -1,0 +1,62 @@
+<html>
+	<head>		
+		<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="authentication.js"></script>
+	</head>
+
+		<div>
+			<button id='authorizeUber' type='button'>Authorize Uber</button>			
+			<button id='authorizeLyft' type='button'>Authorize Lyft</button>			
+		</div>
+	<body>
+		
+		<script>
+	
+
+		var lyftClientId = '76w9JwuMxobz';
+		var lyftClientSecret = '0dHw3FIhpOGVc4Bv7agROzU46uSi8O5p'
+		var uberClientId = 'JUads08labhdf-T9zrNpqID17w9Hp1gL';
+		var uberClientSecret = 'Cjpm2xOXNNatRp3_fMeBBj8rC_Dj54_SBQU4g_fu';	
+		var uberAuthorization = 'kYWsH2lKFHNxTpOeLJPuwJokbIaGol';
+		
+		var uberAuthorizeUri = 'https://login.uber.com/oauth/v2/authorize?response_type=code&client_id='+uberClientId
+		
+		var lyftAuthorizeUri = 'https://www.lyft.com/oauth/authorize?scope=rides.read&response_type=code&state=true&client_id='+lyftClientId;
+
+		// var lyftAuthorizeUri = 'https://www.lyft.com/oauth/authorize?scope=rides.read&response_type=code&client_id='+lyftClientId;
+			
+		var authorizeUberButton = document.getElementById('authorizeUber');
+		$(authorizeUberButton).on('click', authorizeUber);
+
+		var authorizeLyftButton = document.getElementById('authorizeLyft');
+		$(authorizeLyftButton).on('click', authorizeLyft);
+
+		// function authorizeUber() {
+		// 	window.location = uberAuthorizeUri
+		// }
+
+		function authorizeLyft() {
+			window.location = lyftAuthorizeUri
+		}
+
+		// function authorizeLyft() {
+		// 	$.ajax({
+		// 		type: 'GET',
+		// 		url: lyftAuthorizeUri,
+		// 		data: {
+		// 			'client_id':lyftClientId,
+		// 			'response_type': 'code',
+		// 			'scope': 'rides.read'
+		// 		}, 
+		// 		success: function(result) {
+		// 			console.log(result.status)
+		// 		}, 
+		// 		error: function (xhr) {
+		// 			console.log(xhr)
+		// 		}
+		// 	});		
+		// }
+
+		</script>		
+	</body>
+</html>

@@ -1,0 +1,99 @@
+<html>
+	<head>
+		<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+		<script src="convertUnixTimestamp.js"></script>
+		<script type="text/javascript" src="authentication.js"></script>
+	</head>
+		<body>
+			<h1>Hello World</h1>
+			
+			<!-- <button id="getAccessToken" type="button">Get Access Token</button> -->
+			<button id="getHistory" type="button">Get History</button>
+
+			<script>
+				var uberAuthorizationCodeUri = window.location.href
+				var uberAuthorization = uberAuthorizationCodeUri.substring(uberAuthorizationCodeUri.indexOf('=')+1);
+				var uberTokenUri = 'https://login.uber.com/oauth/v2/token';
+				var uberClientId = 'JUads08labhdf-T9zrNpqID17w9Hp1gL';
+				var uberClientSecret = 'Cjpm2xOXNNatRp3_fMeBBj8rC_Dj54_SBQU4g_fu';
+				var uberRedirectUri = 'http://localhost:8000/hello';
+				var uberApiHistoryUri = "https://api.uber.com/v1.2/history";
+				var uberAccessToken = '';
+				var uberRefreshToken = '';
+				
+				// var getAccessTokenButton = document.getElementById('getAccessToken');
+				// $(getAccessTokenButton).on('click', getAccessTokenRequest);
+				
+				//getAccessToken then get uberHistory
+				getUberAccessTokenRequest();
+				
+				// var getHistoryButton = document.getElementById('getHistory');
+				// $(getHistoryButton).on('click', getHistory);
+				// getHistory();
+
+				var uberHistory = [];
+
+				function getUberAccessTokenRequest() {
+					$.ajax({
+						type: 'POST',
+						url: uberTokenUri,
+						data: {
+							'client_secret': uberClientSecret,
+							'client_id': uberClientId,
+							'grant_type': 'authorization_code',
+							'redirect_uri': uberRedirectUri,
+							'code': uberAuthorization
+						},
+						success: function(result) {
+							uberAccessToken = result.access_token;
+							uberRefreshToken = result.refresh_token;
+							getUberHistory();
+						},
+						error: function (err) {
+							console.log(err)
+						}
+					});
+				};
+
+				function getUberHistory() {
+					$.ajax({
+						type: 'GET',
+						url: uberApiHistoryUri,
+						headers: {
+							Authorization: 'Bearer '+ uberAccessToken,
+						},
+						data: {
+							limit: 50
+						},
+						success: function(result) {
+							parseUberHistory(result);
+							// console.log(result)
+							// uberHistory.push(result.history)
+						},
+						error: function (xhr) {
+							console.log(xhr);
+						}
+					});
+				};
+
+				function parseUberHistory(object) {
+					for (var i=0; i<object.history.length; i++) {	
+						var uub = object.history[i];
+						var historyData = {
+							"Distance": uub.distance,
+							"Request_Time": convertTimestamp(uub.request_time),
+							"Start_Time": convertTimestamp(uub.start_time),
+							"End_Time": convertTimestamp(uub.end_time),
+							"Start_City": uub.start_city.display_name,
+							"Start_Location_Lat": uub.start_city.latitude,
+							"Start_Location_Lon": uub.start_city.longitude,
+						};
+						uberHistory.push(historyData)
+					}
+				};
+
+
+
+			</script>
+		</body>	
+</html>
